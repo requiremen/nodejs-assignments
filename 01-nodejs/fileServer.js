@@ -19,3 +19,39 @@ const app = express();
 
 
 module.exports = app;
+
+// solution i made
+const fs = require("fs")
+function readdirectory(folder){
+    return new Promise((function(resolve,reject){
+        fs.readdir(folder,(err,files)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(files)
+            }
+        })
+        
+    }))
+}
+const express = require("express")
+const port = 3000
+const app = express()
+app.get("/files",async (req,res)=>{
+    try{
+        const files = await readdirectory("./files")
+        res.status(200).json({
+            files
+        })
+
+    }catch(err){
+         res.status(200).json({
+            msg:"unable to fetch file"
+        })
+
+
+    }
+})
+app.listen(port,()=>{
+    console.log(`the server is listining on ${port}`)
+})
