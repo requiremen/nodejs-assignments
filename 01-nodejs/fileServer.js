@@ -19,3 +19,73 @@ const app = express();
 
 
 module.exports = app;
+//GET /file/:filename solutinon i made for this route
+const fs = require("fs")
+function readdirectory(folder){
+    return new Promise((function(resolve,reject){
+        fs.readdir(folder,(err,files)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(files)
+            }
+        })
+    }))
+}
+function readfiles(folder,filename){
+    return new Promise((function(resolve,reject){
+        fs.readFile(`${folder}/${filename}`,"utf-8",(err,data)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(data)
+            }
+        })
+    }))
+}
+// async function main(){
+//     try{
+//         const files = await readdirectory("./files")
+//         if(files.includes("a.txt")){
+//             const text = await readfiles("./files","a.txt");
+//             var arr = []
+//             arr.push(text)
+//             console.log(arr)
+//         }else{
+//             console.log("file not found")
+//         }
+
+//     }catch(err){
+//         console.log(err.message)
+
+//     }
+// }
+const express = require("express");
+const port = 3000
+const app = express()
+app.get("/files/:filename",async (req,res)=>{
+    const filename = req.params.filename
+    try{
+        const files = await readdirectory("./files")
+        if(files.includes("a.txt")){
+            const reading = await readfiles("./files","a.txt")
+            res.status(200).json({
+                reading:reading
+            })
+            
+        }else{
+            res.status(404).json({
+                msg:"bharri matra mai hui bakchodi"
+            })
+        }
+
+    }catch(err){
+        res.status(400).json({
+            msg:"unable to read"
+        })
+
+    }
+})
+app.listen(port,()=>{
+    console.log(`app is listning on ${port}`)
+})
